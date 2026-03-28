@@ -13,6 +13,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1056,14 +1057,13 @@
                     cells[2].value || '',
                     cells[3].value || '',
                     cells[4].value || '',
-                    cells[5].value || '',
-                    cells[6].value || ''
+                    cells[5].value || ''
                 ]);
             });
 
             // Generate table
             doc.autoTable({
-                head: [['S/No.', 'Name of Crew', 'Crew ID', 'Desig.', 'Call Logs Found', 'Mobile Status', 'Calling Time', 'BA TEST RESULT']],
+                head: [['S/No.', 'Name of Crew', 'Crew ID', 'Desig.', 'Record No', 'Time', 'BA TEST RESULT']],
                 body: tableData,
                 startY: 45,
                 theme: 'grid',
@@ -1081,13 +1081,12 @@
                 },
                 columnStyles: {
                     0: { cellWidth: 10 },
-                    1: { cellWidth: 30 },
-                    2: { cellWidth: 18 },
-                    3: { cellWidth: 18 },
-                    4: { cellWidth: 30 },
-                    5: { cellWidth: 25 },
-                    6: { cellWidth: 18 },
-                    7: { cellWidth: 41 }
+                    1: { cellWidth: 40 },
+                    2: { cellWidth: 22 },
+                    3: { cellWidth: 20 },
+                    4: { cellWidth: 24 },
+                    5: { cellWidth: 20 },
+                    6: { cellWidth: 46 }
                 },
                 alternateRowStyles: {
                     fillColor: [240, 248, 255]
