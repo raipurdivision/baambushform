@@ -11,6 +11,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -307,14 +308,26 @@
         .voice-toggle-container {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: space-between;
             padding: 15px 30px;
             background: #f0f8ff;
             border-bottom: 2px solid #b3d9ff;
         }
 
-        .voice-toggle-label {
-            margin-right: 10px;
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .voice-toggle-label,
+        .mobile-toggle-label {
             font-weight: bold;
             color: #2c3e50;
             font-size: 14px;
@@ -390,6 +403,90 @@
             50% { opacity: 0.5; }
         }
 
+        /* Mobile View Styles */
+        body.mobile-view {
+            padding: 0;
+        }
+
+        body.mobile-view .container {
+            max-width: 100%;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        body.mobile-view .header h1 {
+            font-size: 1.2em;
+            letter-spacing: 1px;
+        }
+
+        body.mobile-view .header h2 {
+            font-size: 0.9em;
+        }
+
+        body.mobile-view .header {
+            padding: 15px 10px;
+        }
+
+        body.mobile-view .voice-toggle-container {
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        body.mobile-view .toggle-group {
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;
+        }
+
+        body.mobile-view .form-container {
+            padding: 15px 10px;
+        }
+
+        body.mobile-view .info-fields {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        body.mobile-view .info-field {
+            flex: 1 1 100%;
+        }
+
+        body.mobile-view table {
+            font-size: 9px;
+        }
+
+        body.mobile-view th,
+        body.mobile-view td {
+            padding: 5px 3px;
+            font-size: 8px;
+        }
+
+        body.mobile-view input[type="text"],
+        body.mobile-view input[type="time"],
+        body.mobile-view input[type="date"],
+        body.mobile-view select,
+        body.mobile-view textarea {
+            font-size: 11px;
+            padding: 6px;
+        }
+
+        body.mobile-view .button-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        body.mobile-view button {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 0.85em;
+        }
+
+        body.mobile-view .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.5em;
@@ -414,15 +511,29 @@
             <h2>Raipur Division</h2>
         </div>
 
-        <!-- Voice Typing Toggle -->
+        <!-- Toggle Switches Container -->
         <div class="voice-toggle-container">
-            <span class="voice-toggle-label">Voice Typing:</span>
-            <label class="switch">
-                <input type="checkbox" id="voiceToggle" onchange="toggleVoiceTyping()">
-                <span class="slider"></span>
-            </label>
-            <span class="voice-status" id="voiceStatus">OFF</span>
-            <span class="listening-indicator" id="listeningIndicator">🎤 Listening...</span>
+            <div class="toggle-group">
+                <!-- Mobile View Toggle -->
+                <div class="toggle-item">
+                    <span class="mobile-toggle-label">📱 Mobile View:</span>
+                    <label class="switch">
+                        <input type="checkbox" id="mobileToggle" onchange="toggleMobileView()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Voice Typing Toggle -->
+                <div class="toggle-item">
+                    <span class="voice-toggle-label">🎤 Voice Typing:</span>
+                    <label class="switch">
+                        <input type="checkbox" id="voiceToggle" onchange="toggleVoiceTyping()">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="voice-status" id="voiceStatus">OFF</span>
+                    <span class="listening-indicator" id="listeningIndicator">🎤 Listening...</span>
+                </div>
+            </div>
         </div>
 
         <div class="form-container">
@@ -1226,6 +1337,18 @@
 
             // Reset the file input so the same file can be uploaded again
             event.target.value = '';
+        }
+
+        // Mobile View Toggle Function
+        function toggleMobileView() {
+            const toggle = document.getElementById('mobileToggle');
+            if (toggle.checked) {
+                document.body.classList.add('mobile-view');
+                showMessage('Mobile view enabled! Page optimized for mobile screens.', 'success');
+            } else {
+                document.body.classList.remove('mobile-view');
+                showMessage('Desktop view restored.', 'success');
+            }
         }
     </script>
 </body>
