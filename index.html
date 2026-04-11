@@ -17,6 +17,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1372,12 +1373,10 @@
             // Don't stop recognition on blur, keep it running for next field
         }
 
-        function openZoomInput(inputElement) {
-            originalInputElement = inputElement;
-            const zoomOverlay = document.getElementById('zoomOverlay');
-            const zoomInput = document.getElementById('zoomInput');
-            const zoomTitle = document.getElementById('zoomTitle');
-
+        function openZoomInput() {
+            
+          
+           
             // Get the column header name
             const td = inputElement.closest('td');
             const columnIndex = Array.from(td.parentElement.children).indexOf(td);
@@ -1386,16 +1385,14 @@
             const columnName = headerCell ? headerCell.textContent.trim() : 'Enter Text';
 
             // Set title and value
-            zoomTitle.textContent = columnName;
-            zoomInput.value = inputElement.value;
+      
 
             // Show overlay
-            zoomOverlay.classList.add('active');
+       
 
             // Focus on zoom input
             setTimeout(() => {
-                zoomInput.focus();
-
+          
                 // Set up voice typing for zoom input if enabled
                 if (isVoiceEnabled) {
                     currentFocusedElement = zoomInput;
@@ -1419,11 +1416,7 @@
             }
 
             // Hide overlay
-            zoomOverlay.classList.remove('active');
-
-            // Clear zoom input
-            zoomInput.value = '';
-            originalInputElement = null;
+          
 
             // Reset voice typing reference
             if (isVoiceEnabled) {
