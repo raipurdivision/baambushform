@@ -1,0 +1,876 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random BA Test Report – Raipur Division</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            background:linear-gradient(135deg,#b1d5e6 0%,#87ceeb 100%);
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            padding:20px;min-height:100vh;
+        }
+        .container{
+            max-width:1130px;margin:0 auto;
+            background:rgb(138,201,241);
+            border-radius:15px;
+            box-shadow:0 10px 40px rgba(0,0,0,0.2);
+            overflow:hidden;
+        }
+        /* ── HEADER ── */
+        .header{
+            background:linear-gradient(135deg,#1a237e 0%,#283593 100%);
+            color:white;border-bottom:4px solid #FFD700;
+            padding:12px 20px;position:relative;
+        }
+        .header-inner{display:flex;align-items:center;gap:16px;}
+        .header-logo img{
+            height:80px;width:80px;object-fit:contain;
+            border-radius:50%;border:3px solid #FFD700;
+            background:#fff;padding:2px;
+        }
+        .header-text{text-align:center;flex:1;}
+        .header-text h1{
+            font-size:1.55em;font-weight:bold;text-transform:uppercase;
+            letter-spacing:2px;text-shadow:2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom:2px;
+        }
+        .header-text h2{
+            font-size:1em;font-weight:bold;text-transform:uppercase;
+            letter-spacing:1.5px;color:#FFD700;margin-top:2px;
+        }
+        .header-text h3{
+            font-size:0.85em;font-weight:bold;text-transform:uppercase;
+            letter-spacing:1px;color:#FFD700;opacity:0.88;margin-top:2px;
+        }
+        .header-controls{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+        .toggle-row{display:flex;align-items:center;gap:6px;}
+        .toggle-label{color:#fff;font-size:0.82em;font-weight:bold;text-shadow:1px 1px 2px rgba(0,0,0,.3);}
+        .toggle-switch{position:relative;width:50px;height:26px;display:inline-block;}
+        .toggle-switch input{opacity:0;width:0;height:0;}
+        .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;
+            background:#ffb366;transition:.4s;border-radius:26px;box-shadow:0 2px 5px rgba(0,0,0,.3);}
+        .slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;
+            background:#fff;transition:.4s;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+        input:checked+.slider{background:#2ecc71;}
+        input:checked+.slider:before{transform:translateX(24px);}
+        .voice-status{color:#fff;font-size:.75em;font-weight:bold;min-width:28px;}
+        .voice-indicator{display:none;color:#fff;font-size:1.2em;animation:pulse 1.5s infinite;margin-left:4px;}
+        .voice-indicator.listening{display:inline-flex;align-items:center;gap:4px;}
+        .listening-text{font-size:.72em;font-weight:bold;letter-spacing:.5px;color:#e74c3c;}
+        @keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.05);opacity:.9;}}
+
+        /* ── FORM BODY ── */
+        .form-container{padding:28px;background:#e4e7e7;}
+        .info-section{
+            background:rgb(212,220,218);padding:20px;margin-bottom:20px;
+            border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,.1);
+        }
+        .info-section h2{
+            font-size:1.15em;font-weight:bold;color:#2c3e50;
+            margin-bottom:14px;text-align:center;
+        }
+        .info-fields{display:flex;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
+        .info-field{flex:0 1 340px;}
+        .info-field.full-width{flex:1 1 100%;}
+        .info-field label{display:block;font-weight:bold;margin-bottom:4px;color:#2c3e50;font-size:12px;}
+
+        input[type="text"],input[type="time"],input[type="date"],
+        input[type="file"],select,textarea{
+            width:100%;padding:8px;border:2px solid #b3d9ff;
+            border-radius:5px;font-size:12px;font-weight:bold;
+            transition:border-color .3s,box-shadow .3s;
+        }
+        input[type="text"]:focus,input[type="time"]:focus,input[type="date"]:focus,
+        select:focus,textarea:focus{outline:none;border-color:#4a90e2;box-shadow:0 0 8px rgba(74,144,226,.3);}
+        input[type="text"],textarea{text-transform:uppercase;}
+
+        /* ── TABLES ── */
+        .table-wrapper{overflow-x:auto;margin-bottom:12px;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,.1);}
+        table{width:100%;border-collapse:collapse;background:#fff;}
+        thead{background:linear-gradient(135deg,#1a237e 0%,#4a8ec2 100%);color:#fff;}
+        th{padding:10px 8px;text-align:center;font-weight:bold;font-size:12px;
+            border:2px solid #3a7ca5;text-transform:uppercase;}
+        tbody tr{transition:background-color .3s;}
+        tbody tr:nth-child(odd){background:#f0f8ff;}
+        tbody tr:nth-child(even){background:#fff;}
+        tbody tr:hover{background:#d4e9ff;}
+        td{padding:7px;border:1px solid #b3d9ff;text-align:center;font-size:12px;}
+        td:first-child{font-weight:bold;background:#e6f2ff;}
+        td input[type="text"]{border:1px solid #ccc;padding:5px;font-size:11px;min-width:90px;}
+
+        .add-row-btn{
+            background:linear-gradient(135deg,#27ae60 0%,#229954 100%);
+            color:#fff;padding:7px 16px;border:none;border-radius:6px;
+            cursor:pointer;font-size:12px;font-weight:bold;margin-top:7px;transition:all .3s;
+        }
+        .add-row-btn:hover{background:linear-gradient(135deg,#229954 0%,#1e8449 100%);transform:translateY(-1px);}
+
+        /* ── SIGNATURES ── */
+        .sig-section{
+            background:rgb(212,220,218);padding:20px;margin-bottom:20px;
+            border-radius:8px;box-shadow:0 4px 15px rgba(255,255,255,.1);
+        }
+        .sig-section h2{font-size:1.15em;font-weight:bold;color:#2c3e50;margin-bottom:14px;text-align:center;}
+        .sig-grid{display:flex;gap:20px;flex-wrap:wrap;}
+        .sig-card{
+            flex:1 1 280px;background:#fff;border-radius:8px;padding:16px;
+            border:2px solid #b3d9ff;box-shadow:0 2px 8px rgba(0,0,0,.08);
+        }
+        .sig-card h3{
+            font-size:0.95em;font-weight:bold;color:#1a237e;
+            margin-bottom:12px;text-align:center;
+            background:linear-gradient(135deg,#e8f0fe,#c5cbe3);
+            padding:6px;border-radius:5px;
+        }
+        .sig-preview{margin-top:8px;display:none;text-align:center;}
+        .sig-preview img{max-width:200px;max-height:90px;border:2px solid #4a90e2;border-radius:5px;}
+
+        /* ── REMARKS ── */
+        .remarks-section{margin-top:16px;margin-bottom:14px;}
+        .remarks-section label{display:block;font-weight:bold;margin-bottom:5px;color:#2c3e50;font-size:12px;}
+        .remarks-section textarea{width:100%;font-size:12px;min-height:50px;border:1px solid #b3d9ff;overflow-y:hidden;resize:none;}
+
+        /* ── BUTTONS ── */
+        .button-group{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:18px;}
+        button{
+            padding:11px 26px;font-size:.95em;font-weight:bold;border:none;border-radius:8px;
+            cursor:pointer;transition:all .3s;text-transform:uppercase;letter-spacing:1px;
+            box-shadow:0 4px 10px rgba(0,0,0,.2);
+        }
+        .submit-btn{background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;}
+        .submit-btn:hover{background:linear-gradient(135deg,#2980b9,#21618c);transform:translateY(-2px);}
+        .pdf-btn{background:linear-gradient(135deg,#e67e22,#d35400);color:#fff;}
+        .pdf-btn:hover{background:linear-gradient(135deg,#d35400,#ba4a00);transform:translateY(-2px);}
+        .save-draft-btn{background:linear-gradient(135deg,#9b59b6,#8e44ad);color:#fff;}
+        .save-draft-btn:hover{background:linear-gradient(135deg,#8e44ad,#7d3c98);transform:translateY(-2px);}
+        .upload-draft-btn{background:linear-gradient(135deg,#16a085,#138d75);color:#fff;}
+        .upload-draft-btn:hover{background:linear-gradient(135deg,#138d75,#117a65);transform:translateY(-2px);}
+
+        .message{
+            display:none;margin-top:16px;padding:14px;border-radius:8px;
+            text-align:center;font-weight:bold;
+        }
+        .message.success{background:#d4edda;color:#155724;border:2px solid #c3e6cb;}
+        .message.error{background:#f8d7da;color:#721c24;border:2px solid #f5c6cb;}
+
+        /* ── ZOOM OVERLAY ── */
+        .zoom-overlay{
+            display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+            background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center;
+        }
+        .zoom-overlay.active{display:flex;}
+        .zoom-input-container{
+            background:#fff;width:90%;max-width:500px;border-radius:10px;
+            padding:20px;box-shadow:0 10px 40px rgba(0,0,0,.3);
+        }
+        .zoom-input-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+        .zoom-input-title{font-size:1.15em;font-weight:bold;color:#2c3e50;}
+        .zoom-close-btn{
+            background:#e74c3c;color:#fff;border:none;border-radius:50%;
+            width:34px;height:34px;font-size:1.4em;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+        }
+        .zoom-input{width:100%;min-height:140px;padding:14px;font-size:17px;
+            border:2px solid #4a90e2;border-radius:8px;resize:vertical;}
+        .zoom-done-btn{
+            width:100%;margin-top:14px;padding:11px;background:#27ae60;
+            color:#fff;border:none;border-radius:8px;font-size:1.05em;font-weight:bold;cursor:pointer;
+        }
+
+        @media(max-width:768px){
+            .header-text h1{font-size:1.2em;}
+            .header-inner{flex-direction:column;text-align:center;}
+            .header-controls{align-items:center;}
+            .button-group{flex-direction:column;}
+            button{width:100%;}
+        }
+        body.mobile-view{padding:0;}
+        body.mobile-view .container{max-width:100%;border-radius:0;margin:0;}
+        body.mobile-view .header{padding:10px;}
+        body.mobile-view .header-text h1{font-size:1em;}
+        body.mobile-view .form-container{padding:12px 8px;}
+        body.mobile-view .info-fields{flex-direction:column;}
+        body.mobile-view table{font-size:9px;}
+        body.mobile-view th,body.mobile-view td{padding:4px 3px;font-size:8px;}
+    </style>
+</head>
+<body>
+
+<!-- Zoom Overlay -->
+<
+
+<div class="container">
+
+    <!-- ── HEADER ── -->
+    <div class="header">
+        <div class="header-inner">
+            <div class="header-logo">
+                <img id="railLogo" src="data:image/png;base64,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" alt="Indian Railways">
+            </div>
+            <div class="header-text">
+                <h1>Random BA Test Report</h1>
+                <h2>Raipur Division</h2>
+                
+            </div>
+            <div class="header-controls">
+                <div class="toggle-row">
+                    <span class="toggle-label">📱 Mobile</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="mobileToggle" onchange="toggleMobileView()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-row">
+                    <span class="toggle-label">🎤 Voice</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="voiceToggle" onchange="toggleVoiceTyping()">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="voice-status" id="voiceStatus">OFF</span>
+                    <span class="voice-indicator" id="voiceIndicator">
+                        <span>🎤</span><span class="listening-text">Listening</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-container">
+
+        <!-- ── SECTION 1: Basic Details ── -->
+        <div class="info-section">
+            <h2>Inspection Details</h2>
+            <div class="info-fields">
+                <div class="info-field">
+                    <label>Date:</label>
+                    <input type="date" id="formDate">
+                </div>
+                <div class="info-field">
+                    <label>Time:</label>
+                    <input type="text" id="formTime" placeholder="">
+                </div>
+                <div class="info-field">
+                    <label>Place:</label>
+                    <input type="text" id="formPlace" placeholder="">
+                </div>
+                <div class="info-field">
+                    <label>BA Machine No.:</label>
+                    <input type="text" id="baMachineNo" placeholder="">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── TABLE ── -->
+        <div class="info-section">
+            <h2>BA Test Details</h2>
+            <div class="table-wrapper">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th style="width:50px;">S/No.</th>
+                            <th style="width:240px;">Name of Crew</th>
+                            <th style="width:100px;">Crew ID</th>
+                            <th style="width:100px;">Desig.</th>
+                            <th style="width:150px;">Record No</th>
+                            <th style="width:120px;">Time</th>
+                            <th style="width:120px;">BA TEST RESULT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+            <button class="add-row-btn" onclick="addRow()">+ Add Row</button>
+        </div>
+
+        <!-- ── REMARKS ── -->
+        <div class="info-section">
+            <div class="remarks-section">
+                <label for="otherRemarks">Other Remarks if any:</label>
+                <textarea id="otherRemarks" rows="2" placeholder="ENTER REMARKS IF ANY"></textarea>
+            </div>
+        </div>
+
+        <!-- ── SIGNATURES ── -->
+        <div class="sig-section">
+            <h2>CLI Signatures</h2>
+            <div class="sig-grid">
+
+                <!-- CLI 1 -->
+                <div class="sig-card">
+                    <h3>CLI – 1</h3>
+                    <div class="info-field">
+                        <label>CLI Name &amp; HQ:</label>
+                        <select id="cli1Name">
+                            <option value="">Select CLI Name and HQ</option>
+                            <option>A K REDDY/CLI/R</option><option>A.R.TARAM/CLI/BIA</option>
+                            <option>ABDUL MOIN KHAN/CLI/BIA</option><option>AKHILESH KUMAR/CLI/BIA</option>
+                            <option>AMIT KUMAR BANKURE/CLI/BYT</option><option>ANANT PRAKASH SHRIVASTAVA/CLI/BIA</option>
+                            <option>ANIL KUMAR/CLI/BIA</option><option>ANKIT RAM KANT/CLI/BIA</option>
+                            <option>AVON KUMAR SAHU/CLI/R</option><option>ASHISH WANJARI/CLI/BYT</option>
+                            <option>B B KUSHWAHA/CLI/BIA</option><option>B K HARMUKH/CLI/BIA</option>
+                            <option>B. K. SAHA/CLI/BIA</option><option>B.K.SONI/CLI/BIA</option>
+                            <option>BHARAT SINGH ATBHAIYYA/CLI/R</option><option>BHOLI CHAUDHARY/CLI/R</option>
+                            <option>BIKRAMJIT KANRAR/CLI/BIA</option><option>BINOD KUMAR RAM/CLI/R</option>
+                            <option>DEEPANNITA PUNTAMBEKAR/CLI/BIA</option><option>DILLI RAO/CLI/BYT</option>
+                            <option>G. C. BISWAS/CLI/R</option><option>G. V. R. K. MADHU/CLI/BIA</option>
+                            <option>GIRDHARI LAL/CLI/R</option><option>JAISHANKAR SHARMA/CLI/BIA</option>
+                            <option>JITENDRA KUMAR MISHRA/CLI/BYT</option><option>K P LAHARE/CLI/R</option>
+                            <option>K P HIRWANI/CLI/BYT</option><option>K. K. SAHU/CLI/BIA</option>
+                            <option>KHUSAL SINGH/CLI/DRZ</option><option>MAHESHWAR/CLI/BIA</option>
+                            <option>MANOJ KUMAR SAO/CLI/R</option><option>MANSUKH LAL CHANDRAKAR/CLI/R</option>
+                            <option>MOHIT KUMAR SWARNKAR/CLI/BIA</option><option>N. R. KARPAL/CLI/BIA</option>
+                            <option>N.K. BHOI/CLI/R</option><option>NITIN KUKDE/CLI/BYT</option>
+                            <option>NIRMAL KUMAR/CLI/BYT</option><option>P.K. PATEL/CLI/BIA</option>
+                            <option>PANKAJ KUMAR SINGH/CLI/BIA</option><option>PAWAN KUMAR SINGH/CLI/BIA</option>
+                            <option>PALAK RAM ALENDRA/CLI/DRZ</option><option>RAJENDRA KUMAR/CLI/BIA</option>
+                            <option>RAJESH KUMAR DESHMUKH/CLI/R</option><option>RAJNEESH BENERJEE/CLI/BIA</option>
+                            <option>RANJEET SINGH/CLI/BYT</option><option>RAKESH KUMAR KOSTA/CLI/DRZ</option>
+                            <option>S K GAUTAM/CLI/BIA</option><option>S S HUSSAIN/CLI/BIA</option>
+                            <option>S. C. RAI/CLI/BIA</option><option>S. K. SINGH/CLI/BIA</option>
+                            <option>S. L. SONI/CLI/R</option><option>SANJAY KUMAR ROY/CLI/BIA</option>
+                            <option>SANJAY SINGH/CLI/BYT</option><option>SANJEEV KUMAR SHARMA/CLI/BIA</option>
+                            <option>SANTOSH KUAMAR PATKAR/CLI/BIA</option><option>SHAILENDRA SINGH/CLI/BIA</option>
+                            <option>SUNDEEP KUMAR SHARMA/CLI/BIA</option><option>SUNIL KUMAR DEWANGAN/CLI/BIA</option>
+                            <option>SANAT KUMAR SAHU/CLI/DRZ</option><option>V.K. BHAGAT/CLI/R</option>
+                            <option>VIJAY KUMAR ARYA/CLI/BIA</option><option>VIKAS SHENDE/CLI/BIA</option>
+                            <option>VINAY KUMAR VINCHURE/CLI/BIA</option><option>VINAY PANTAWANE/CLI/BIA</option>
+                            <option>Y. RAMU/CLI/BIA</option><option>YOGESH KUMAR MIHAULIA/CLI/BIA</option>
+                            <option>OTHERS</option>
+                        </select>
+                    </div>
+                    <div class="info-field" style="margin-top:8px;">
+                        <label>Date:</label>
+                        <input type="date" id="cli1Date">
+                    </div>
+                    <div class="info-field" style="margin-top:8px;text-align:center;">
+                        <label>Upload Signature:</label>
+                        <input type="file" id="cli1Sig" accept="image/*" onchange="previewSig(event,'cli1SigPreview','cli1SigImg')">
+                        <div class="sig-preview" id="cli1SigPreview">
+                            <img id="cli1SigImg" alt="CLI 1 Signature">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLI 2 -->
+                <div class="sig-card">
+                    <h3>CLI – 2</h3>
+                    <div class="info-field">
+                        <label>CLI Name &amp; HQ:</label>
+                        <select id="cli2Name">
+                            <option value="">Select CLI Name and HQ</option>
+                            <option>A K REDDY/CLI/R</option><option>A.R.TARAM/CLI/BIA</option>
+                            <option>ABDUL MOIN KHAN/CLI/BIA</option><option>AKHILESH KUMAR/CLI/BIA</option>
+                            <option>AMIT KUMAR BANKURE/CLI/BYT</option><option>ANANT PRAKASH SHRIVASTAVA/CLI/BIA</option>
+                            <option>ANIL KUMAR/CLI/BIA</option><option>ANKIT RAM KANT/CLI/BIA</option>
+                            <option>AVON KUMAR SAHU/CLI/R</option><option>ASHISH WANJARI/CLI/BYT</option>
+                            <option>B B KUSHWAHA/CLI/BIA</option><option>B K HARMUKH/CLI/BIA</option>
+                            <option>B. K. SAHA/CLI/BIA</option><option>B.K.SONI/CLI/BIA</option>
+                            <option>BHARAT SINGH ATBHAIYYA/CLI/R</option><option>BHOLI CHAUDHARY/CLI/R</option>
+                            <option>BIKRAMJIT KANRAR/CLI/BIA</option><option>BINOD KUMAR RAM/CLI/R</option>
+                            <option>DEEPANNITA PUNTAMBEKAR/CLI/BIA</option><option>DILLI RAO/CLI/BYT</option>
+                            <option>G. C. BISWAS/CLI/R</option><option>G. V. R. K. MADHU/CLI/BIA</option>
+                            <option>GIRDHARI LAL/CLI/R</option><option>JAISHANKAR SHARMA/CLI/BIA</option>
+                            <option>JITENDRA KUMAR MISHRA/CLI/BYT</option><option>K P LAHARE/CLI/R</option>
+                            <option>K P HIRWANI/CLI/BYT</option><option>K. K. SAHU/CLI/BIA</option>
+                            <option>KHUSAL SINGH/CLI/DRZ</option><option>MAHESHWAR/CLI/BIA</option>
+                            <option>MANOJ KUMAR SAO/CLI/R</option><option>MANSUKH LAL CHANDRAKAR/CLI/R</option>
+                            <option>MOHIT KUMAR SWARNKAR/CLI/BIA</option><option>N. R. KARPAL/CLI/BIA</option>
+                            <option>N.K. BHOI/CLI/R</option><option>NITIN KUKDE/CLI/BYT</option>
+                            <option>NIRMAL KUMAR/CLI/BYT</option><option>P.K. PATEL/CLI/BIA</option>
+                            <option>PANKAJ KUMAR SINGH/CLI/BIA</option><option>PAWAN KUMAR SINGH/CLI/BIA</option>
+                            <option>PALAK RAM ALENDRA/CLI/DRZ</option><option>RAJENDRA KUMAR/CLI/BIA</option>
+                            <option>RAJESH KUMAR DESHMUKH/CLI/R</option><option>RAJNEESH BENERJEE/CLI/BIA</option>
+                            <option>RANJEET SINGH/CLI/BYT</option><option>RAKESH KUMAR KOSTA/CLI/DRZ</option>
+                            <option>S K GAUTAM/CLI/BIA</option><option>S S HUSSAIN/CLI/BIA</option>
+                            <option>S. C. RAI/CLI/BIA</option><option>S. K. SINGH/CLI/BIA</option>
+                            <option>S. L. SONI/CLI/R</option><option>SANJAY KUMAR ROY/CLI/BIA</option>
+                            <option>SANJAY SINGH/CLI/BYT</option><option>SANJEEV KUMAR SHARMA/CLI/BIA</option>
+                            <option>SANTOSH KUAMAR PATKAR/CLI/BIA</option><option>SHAILENDRA SINGH/CLI/BIA</option>
+                            <option>SUNDEEP KUMAR SHARMA/CLI/BIA</option><option>SUNIL KUMAR DEWANGAN/CLI/BIA</option>
+                            <option>SANAT KUMAR SAHU/CLI/DRZ</option><option>V.K. BHAGAT/CLI/R</option>
+                            <option>VIJAY KUMAR ARYA/CLI/BIA</option><option>VIKAS SHENDE/CLI/BIA</option>
+                            <option>VINAY KUMAR VINCHURE/CLI/BIA</option><option>VINAY PANTAWANE/CLI/BIA</option>
+                            <option>Y. RAMU/CLI/BIA</option><option>YOGESH KUMAR MIHAULIA/CLI/BIA</option>
+                            <option>OTHERS</option>
+                        </select>
+                    </div>
+                    <div class="info-field" style="margin-top:8px;">
+                        <label>Date:</label>
+                        <input type="date" id="cli2Date">
+                    </div>
+                    <div class="info-field" style="margin-top:8px;text-align:center;">
+                        <label>Upload Signature:</label>
+                        <input type="file" id="cli2Sig" accept="image/*" onchange="previewSig(event,'cli2SigPreview','cli2SigImg')">
+                        <div class="sig-preview" id="cli2SigPreview">
+                            <img id="cli2SigImg" alt="CLI 2 Signature">
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /sig-grid -->
+        </div><!-- /sig-section -->
+
+        <input type="file" id="draftFileInput" accept=".json" onchange="handleDraftUpload(event)" style="display:none;">
+
+        <div class="button-group">
+            <button class="save-draft-btn" onclick="saveDraft()">💾 Save Draft</button>
+            <button class="upload-draft-btn" onclick="document.getElementById('draftFileInput').click()">📂 Upload Draft</button>
+            <button class="submit-btn" onclick="submitForm()">✅ Submit</button>
+            <button class="pdf-btn" onclick="generatePDF()">📄 Generate PDF</button>
+        </div>
+
+        <div id="message" class="message"></div>
+
+    </div><!-- /form-container -->
+</div><!-- /container -->
+
+<script>
+    // ── Config ────────────────────────────────────────────────────────────────
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx925u38wzR-CPiP0vxvzI22Gewm8EzD1pG6gjv4qyu24ICAje_oKzF6LbM2ubAqz8X5g/exec";
+    // ↑ Replace above URL with your NEW Apps Script Web App URL after deploying the script below
+    let dataSubmitted = false; // tracks whether form has been successfully submitted
+    let rowCount = 0;
+    let originalInputElement = null;
+
+    // ── Init rows ─────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        for (let i = 0; i < 10; i++) addRow(false);
+        const todayISO = new Date().toISOString().split('T')[0];
+        document.getElementById('formDate').value = todayISO;
+        document.getElementById('cli1Date').value = todayISO;
+        document.getElementById('cli2Date').value = todayISO;
+
+        document.addEventListener('focus', e => {
+            if (e.target.matches('input[type="text"],textarea') && document.body.classList.contains('mobile-view'))
+                openZoomInput(e.target);
+        }, true);
+    });
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function showMessage(text, type) {
+        const el = document.getElementById('message');
+        el.textContent = text; el.className = 'message ' + type; el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 3500);
+    }
+
+    function getVal(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+
+    function previewSig(event, previewId, imgId) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById(imgId).src = e.target.result;
+            document.getElementById(previewId).style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ── Table rows ────────────────────────────────────────────────────────────
+    function addRow(showMsg = true) {
+        rowCount++;
+        const tbody = document.getElementById('tableBody');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="row-number">${rowCount}</td>
+            <td><input type="text" placeholder=""></td>
+            <td><input type="text" placeholder=""></td>
+            <td><input type="text" placeholder=""></td>
+            <td><input type="text" placeholder=""></td>
+            <td><input type="text" placeholder=""></td>
+            <td><input type="text" value="0/mg/100ml"></td>
+        `;
+        tbody.appendChild(tr);
+        if (showMsg) showMessage('Row added!', 'success');
+    }
+
+    function updateRowNumbers() {
+        document.querySelectorAll('#tableBody tr').forEach((row, i) => {
+            row.querySelector('.row-number').textContent = i + 1;
+        });
+        rowCount = document.querySelectorAll('#tableBody tr').length;
+    }
+
+    // ── Collect data ──────────────────────────────────────────────────────────
+    function collectData() {
+        const tableData = [];
+        document.querySelectorAll('#tableBody tr').forEach((row, index) => {
+            const cells = row.querySelectorAll('input');
+            tableData.push({
+                sno: index + 1,
+                name: cells[0] ? cells[0].value : '',
+                crewId: cells[1] ? cells[1].value : '',
+                designation: cells[2] ? cells[2].value : '',
+                recordNo: cells[3] ? cells[3].value : '',
+                time: cells[4] ? cells[4].value : '',
+                baTestResult: cells[5] ? cells[5].value : ''
+            });
+        });
+        return {
+            formDate: getVal('formDate'),
+            formTime: getVal('formTime'),
+            formPlace: getVal('formPlace'),
+            baMachineNo: getVal('baMachineNo'),
+            otherRemarks: getVal('otherRemarks'),
+            cli1: { name: getVal('cli1Name'), date: getVal('cli1Date') },
+            cli2: { name: getVal('cli2Name'), date: getVal('cli2Date') },
+            tableData
+        };
+    }
+
+    // ── Submit ────────────────────────────────────────────────────────────────
+    function submitForm() {
+        const d = collectData();
+        if (!d.formDate) { showMessage('Please select a date!', 'error'); return; }
+        if (!d.cli1.name && !d.cli2.name) { showMessage('Please select at least one CLI Name!', 'error'); return; }
+
+        // Build the payload with exactly the required fields
+        const payload = {
+            cli1Name: d.cli1.name || '',
+            cli2Name: d.cli2.name || '',
+            date:     d.formDate,
+            time:     d.formTime,
+            place:    d.formPlace,
+            remarks:  d.otherRemarks
+        };
+
+        // Debug: verify both CLI names are captured separately
+        console.log('Submitting payload:', JSON.stringify(payload));
+
+        showMessage('⏳ Submitting data to Google Sheets...', 'success');
+        fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => { dataSubmitted = true; showMessage('✅ Data submitted to Google Sheets successfully!', 'success'); })
+        .catch(() => showMessage('❌ Error submitting. Check network and try again.', 'error'));
+        // NOTE: PDF is NOT generated on submit. Use the 📄 Generate PDF button separately.
+    }
+
+    // ── Save Draft ────────────────────────────────────────────────────────────
+    function saveDraft() {
+        try {
+            const data = collectData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'BA_Test_Draft_' + new Date().toISOString().split('T')[0] + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showMessage('Draft saved!', 'success');
+        } catch (e) {
+            showMessage('Error saving draft: ' + e.message, 'error');
+        }
+    }
+
+    // ── Upload Draft ──────────────────────────────────────────────────────────
+    function handleDraftUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const d = JSON.parse(e.target.result);
+                function sv(id, val) { const el = document.getElementById(id); if (el) el.value = val || ''; }
+                sv('formDate', d.formDate); sv('formTime', d.formTime);
+                sv('formPlace', d.formPlace); sv('baMachineNo', d.baMachineNo);
+                sv('otherRemarks', d.otherRemarks);
+                if (d.cli1) { sv('cli1Name', d.cli1.name); sv('cli1Date', d.cli1.date); }
+                if (d.cli2) { sv('cli2Name', d.cli2.name); sv('cli2Date', d.cli2.date); }
+                if (d.tableData && d.tableData.length > 0) {
+                    const tbody = document.getElementById('tableBody');
+                    tbody.innerHTML = '';
+                    rowCount = 0;
+                    d.tableData.forEach((row, i) => {
+                        rowCount++;
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="row-number">${i + 1}</td>
+                            <td><input type="text" value="${row.name || ''}"></td>
+                            <td><input type="text" value="${row.crewId || ''}"></td>
+                            <td><input type="text" value="${row.designation || ''}"></td>
+                            <td><input type="text" value="${row.recordNo || ''}"></td>
+                            <td><input type="text" value="${row.time || ''}"></td>
+                            <td><input type="text" value="${row.baTestResult || '0/mg/100ml'}"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+                showMessage('Draft loaded successfully!', 'success');
+            } catch (err) { showMessage('Error loading draft: ' + err.message, 'error'); }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    // ── PDF Generation (updated) ──────────────────────────────────────────────
+    const RAIL_B64 = document.getElementById('railLogo').src;
+
+    function generatePDF() {
+        // Block PDF generation if form has not been submitted first
+        if (!dataSubmitted) {
+            showMessage('⚠️ Please submit the data first before generating PDF!', 'error');
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pw = doc.internal.pageSize.getWidth();
+        const mL = 10, mR = pw - 10;
+        let y = 0;
+
+        function checkPage(needed) {
+            if (y + needed > 284) { doc.addPage(); y = 10; }
+        }
+
+        // ── Compact PDF Header (26mm) ──
+        doc.setFillColor(26, 35, 126);
+        doc.rect(0, 0, pw, 26, 'F');
+        doc.setDrawColor(255, 215, 0);
+        doc.setLineWidth(1.2);
+        doc.line(0, 26, pw, 26);
+        try { doc.addImage(RAIL_B64, 'PNG', mL, 4, 16, 16); } catch (e) {}
+        doc.setFont(undefined, 'bold'); doc.setTextColor(255, 255, 255);
+        doc.setFontSize(13);
+        doc.text('RANDOM BA TEST REPORT', pw / 2, 10, { align: 'center' });
+        doc.setFontSize(10); doc.setTextColor(255, 215, 0);
+        doc.text('RAIPUR DIVISION  ', pw / 2, 17, { align: 'center' });
+        doc.setFontSize(9); doc.setTextColor(220, 220, 220);
+       
+        y = 30;
+
+        const d = collectData();
+
+        // ── Compact section header (6mm tall) ──
+        function sectionHeader(title) {
+            checkPage(10);
+            doc.setFillColor(30, 90, 160);
+            doc.roundedRect(mL, y, mR - mL, 6, 1, 1, 'F');
+            doc.setFont(undefined, 'bold'); doc.setFontSize(9); doc.setTextColor(255, 255, 255);
+            if (title) doc.text(title, mL + 2, y + 4.2);
+            y += 9;
+        }
+
+        // ── Inspection Details ──
+        sectionHeader('INSPECTION DETAILS');
+        const lx = mL + 2, rx = pw / 2 + 2;
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'bold'); doc.setTextColor(60, 60, 60);
+        doc.text('Date:', lx, y);
+        doc.setFont(undefined, 'bold'); doc.setTextColor(0, 0, 0);
+        doc.text(d.formDate || '', lx + 14, y);
+        doc.setFont(undefined, 'bold'); doc.setTextColor(60, 60, 60);
+        doc.text('Time:', rx, y);
+        doc.setFont(undefined, 'bold'); doc.setTextColor(0, 0, 0);
+        doc.text(d.formTime || '', rx + 14, y);
+        y += 5;
+        doc.setFont(undefined, 'bold'); doc.setTextColor(60, 60, 60);
+        doc.text('Place:', lx, y);
+        doc.setFont(undefined, 'bold'); doc.setTextColor(0, 0, 0);
+        doc.text(d.formPlace || '', lx + 14, y);
+        doc.setFont(undefined, 'bold'); doc.setTextColor(60, 60, 60);
+        doc.text('BA Machine No.:', rx, y);
+        doc.setFont(undefined, 'bold'); doc.setTextColor(0, 0, 0);
+        doc.text(d.baMachineNo || '', rx + 34, y);
+        y += 4;
+
+        // ── BA Test Table (compact rows for 22 rows in 1 page) ──
+        sectionHeader('BA TEST DETAILS');
+        const tableData = d.tableData.map(r => [r.sno, r.name || '', r.crewId || '', r.designation || '', r.recordNo || '', r.time || '', r.baTestResult || '']);
+        doc.autoTable({
+            head: [['S/No.', 'Name of Crew', 'Crew ID', 'Desig.', 'Record No', 'Time', 'BA Test Result']],
+            body: tableData,
+            startY: y,
+            margin: { left: mL, right: 10 },
+            styles: { fontSize: 8.5, cellPadding: 1.1, halign: 'center' },
+            columnStyles: {
+                0: { cellWidth: 9 },
+                1: { cellWidth: 52 },
+                2: { cellWidth: 22 },
+                3: { cellWidth: 17 },
+                4: { cellWidth: 26 },
+                5: { cellWidth: 20 },
+                6: { cellWidth: 34 }
+            },
+            headStyles: { fillColor: [91, 157, 217], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 8.5, cellPadding: 1.4 },
+            alternateRowStyles: { fillColor: [240, 248, 255] },
+            theme: 'grid'
+        });
+        y = doc.lastAutoTable.finalY + 2;
+
+        // ── Other Remarks ──
+        if (d.otherRemarks) {
+            checkPage(12);
+            sectionHeader('OTHER REMARKS');
+            doc.setFont(undefined, 'bold'); doc.setFontSize(9); doc.setTextColor(0, 0, 0);
+            const splitR = doc.splitTextToSize(d.otherRemarks, mR - mL - 4);
+            doc.text(splitR, lx, y);
+            y += splitR.length * 4 + 2;
+        }
+
+        // ── Signatures: NO box borders, NO CLI-1/CLI-2/SIGNATURES labels
+        //    Layout per side: [signature image] → [name bold] → [date]
+        const finalize = (cli1DataUrl, cli2DataUrl) => {
+            checkPage(26);
+            y += 3;
+
+            const halfW = (mR - mL - 8) / 2;
+            const cx1 = mL;
+            const cx2 = mL + halfW + 8;
+            const sigH = 14, sigW = 40;
+
+            // ── CLI 1: signature on top, name below, date below name ──
+            if (cli1DataUrl) {
+                try { doc.addImage(cli1DataUrl, 'PNG', cx1, y, sigW, sigH); } catch (e) {}
+            }
+            doc.setFont(undefined, 'bold'); doc.setFontSize(8); doc.setTextColor(0, 0, 0);
+            doc.text(d.cli1.name || '', cx1, y + sigH + 5);
+            doc.setFont(undefined, 'normal'); doc.setFontSize(8.5); doc.setTextColor(0, 00, 00);
+            doc.text('Date: ' + (d.cli1.date || ''), cx1, y + sigH + 10);
+
+            // ── CLI 2: signature on top, name below, date below name ──
+            if (cli2DataUrl) {
+                try { doc.addImage(cli2DataUrl, 'PNG', cx2, y, sigW, sigH); } catch (e) {}
+            }
+            doc.setFont(undefined, 'bold'); doc.setFontSize(8); doc.setTextColor(0, 0, 0);
+            doc.text(d.cli2.name || '', cx2, y + sigH + 5);
+            doc.setFont(undefined, 'normal'); doc.setFontSize(8.5); doc.setTextColor(0, 0, 0);
+            doc.text('Date: ' + (d.cli2.date || ''), cx2, y + sigH + 10);
+
+            // ── Footer on every page ──
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let pg = 1; pg <= totalPages; pg++) {
+                doc.setPage(pg);
+                doc.setFillColor(26, 35, 126);
+                doc.rect(0, 287, pw, 10, 'F');
+                doc.setFont(undefined, 'normal'); doc.setFontSize(7); doc.setTextColor(255, 215, 0);
+                doc.text('Random BA Test Report | Raipur Division | Indian Railways', pw / 2, 293, { align: 'center' });
+                doc.setTextColor(200, 200, 200);
+                doc.text('Page ' + pg + ' of ' + totalPages, pw - 12, 293);
+            }
+
+            doc.save('BA_Test_' + (d.formDate || new Date().toISOString().split('T')[0]) + '.pdf');
+            showMessage('PDF generated successfully!', 'success');
+        };
+
+        // Load both signatures asynchronously
+        const cli1File = document.getElementById('cli1Sig').files[0];
+        const cli2File = document.getElementById('cli2Sig').files[0];
+        let cli1Url = null, cli2Url = null;
+        let pending = 0;
+        if (cli1File) pending++;
+        if (cli2File) pending++;
+        if (pending === 0) { finalize(null, null); return; }
+        function tryFinalize() { pending--; if (pending === 0) finalize(cli1Url, cli2Url); }
+        if (cli1File) {
+            const r = new FileReader();
+            r.onload = e => { cli1Url = e.target.result; tryFinalize(); };
+            r.readAsDataURL(cli1File);
+        }
+        if (cli2File) {
+            const r = new FileReader();
+            r.onload = e => { cli2Url = e.target.result; tryFinalize(); };
+            r.readAsDataURL(cli2File);
+        }
+    }
+
+    // ── Voice Typing ──────────────────────────────────────────────────────────
+    let recognition = null, voiceEnabled = false, currentInput = null;
+
+    function initVoiceRecognition() {
+        if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+            showMessage('Voice recognition not supported. Use Chrome.', 'error'); return false;
+        }
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SR(); recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-IN';
+        recognition.onresult = e => {
+            if (!currentInput) return;
+            let final = '';
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
+            }
+            if (final) {
+                const cur = currentInput.selectionStart;
+                currentInput.value = currentInput.value.substring(0, cur) + final.toUpperCase() + currentInput.value.substring(cur);
+            }
+        };
+        recognition.onerror = ev => {
+            if (ev.error === 'not-allowed') { showMessage('Mic access denied.', 'error'); document.getElementById('voiceToggle').checked = false; toggleVoiceTyping(); }
+        };
+        return true;
+    }
+
+    async function toggleVoiceTyping() {
+        const toggle = document.getElementById('voiceToggle');
+        const status = document.getElementById('voiceStatus');
+        voiceEnabled = toggle.checked;
+        if (voiceEnabled) {
+            try {
+                const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+                s.getTracks().forEach(t => t.stop());
+                if (!recognition && !initVoiceRecognition()) { toggle.checked = false; return; }
+                status.textContent = 'ON'; status.style.color = '#2ecc71';
+                document.getElementById('voiceIndicator').classList.add('listening');
+                recognition.start();
+                showMessage('Voice typing enabled!', 'success');
+                document.querySelectorAll('input[type="text"],textarea').forEach(el => {
+                    el.addEventListener('focus', handleInputFocus);
+                    el.addEventListener('blur', handleInputBlur);
+                });
+            } catch (err) { showMessage('Microphone permission denied.', 'error'); toggle.checked = false; voiceEnabled = false; }
+        } else {
+            status.textContent = 'OFF'; status.style.color = 'white';
+            if (recognition) recognition.stop();
+            document.getElementById('voiceIndicator').classList.remove('listening');
+            document.querySelectorAll('input[type="text"],textarea').forEach(el => {
+                el.removeEventListener('focus', handleInputFocus);
+                el.removeEventListener('blur', handleInputBlur);
+            });
+            currentInput = null;
+            showMessage('Voice typing disabled.', 'success');
+        }
+    }
+
+    function handleInputFocus(e) {
+        if (document.body.classList.contains('mobile-view')) { openZoomInput(e.target); return; }
+        if (voiceEnabled) { currentInput = e.target; currentInput.style.borderColor = '#e74c3c'; currentInput.style.boxShadow = '0 0 10px rgba(231,76,60,.3)'; }
+    }
+    function handleInputBlur(e) {
+        if (voiceEnabled && e.target === currentInput) { e.target.style.borderColor = '#b3d9ff'; e.target.style.boxShadow = 'none'; }
+    }
+
+    // ── Mobile Zoom ────────────────────────────────────────────────────────────
+    function openZoomInput(el) {
+        originalInputElement = el;
+        document.getElementById('zoomTitle').textContent = el.placeholder || 'Enter Text';
+        document.getElementById('zoomInput').value = el.value;
+        document.getElementById('zoomOverlay').classList.add('active');
+        setTimeout(() => document.getElementById('zoomInput').focus(), 100);
+        el.blur();
+    }
+    function closeZoomInput() {
+        if (originalInputElement) originalInputElement.value = document.getElementById('zoomInput').value;
+        document.getElementById('zoomOverlay').classList.remove('active');
+        document.getElementById('zoomInput').value = '';
+        originalInputElement = null;
+    }
+    function toggleMobileView() {
+        const on = document.getElementById('mobileToggle').checked;
+        document.body.classList.toggle('mobile-view', on);
+        showMessage('Mobile view ' + (on ? 'enabled' : 'disabled') + '!', 'success');
+    }
+</script>
+</body>
+</html>
